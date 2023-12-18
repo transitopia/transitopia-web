@@ -1,0 +1,7 @@
+{
+    "deno.enable": false,
+    "editor.tabSize": 4,
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features",
+    }
+}
