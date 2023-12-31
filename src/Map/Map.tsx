@@ -16,7 +16,7 @@ export const MapWrapper: React.FC<{ children: React.ReactNode }> = ({ children }
     const [map, setMap] = React.useState<maplibregl.Map>();
 
     React.useEffect(() => {
-        (async function() {
+        (async function () {
             // Load the map dependencies asynchronously via a separate bundle:
             const maplibregl = await import("maplibre-gl");
             if (sourceUrl.startsWith("pmtiles://") && !pmTilesInitialized) {
@@ -30,7 +30,7 @@ export const MapWrapper: React.FC<{ children: React.ReactNode }> = ({ children }
             const initialZoom = constrain(parseFloat(initialUrl.searchParams.get("z") ?? ""), 5, 20, 10);
             const initialLng = constrain(parseFloat(initialUrl.searchParams.get("lng") ?? ""), -140, -115, -122.94536684722912);
             const initialLat = constrain(parseFloat(initialUrl.searchParams.get("lat") ?? ""), 47, 60, 49.241584389313424);
-    
+
             const map = new maplibregl.Map({
                 container: 'map',
                 zoom: initialZoom,
@@ -51,6 +51,7 @@ export const MapWrapper: React.FC<{ children: React.ReactNode }> = ({ children }
                 }
             });
             setMap(map);
+            map.getCanvas().style.cursor = 'default';
 
             const handleMapViewChanged = (() => {
                 if (!map) return;
@@ -62,7 +63,7 @@ export const MapWrapper: React.FC<{ children: React.ReactNode }> = ({ children }
                 url.searchParams.set("lng", lng.toFixed(10));
                 history.replaceState({ zoom, lng, lat }, "", url.pathname + url.search);
             });
-        
+
             map.on("zoomend", handleMapViewChanged);
             map.on("moveend", handleMapViewChanged);
         })();
@@ -79,24 +80,68 @@ export const MapCore: React.FC = () => {
     const map = useMap();
 
     const [selectedFeature, setSelectedFeature] = React.useState<{ id: string, type: "cycling-way" } & MapCyclingElement>();
+    const hoveredFeatureIdRef = React.useRef<string | undefined>();
+
+    const handleMouseOver = React.useCallback((e: maplibregl.MapLayerEventType["mousemove"]) => {
+        if (!map) return undefined;
+        if (map.getZoom() < 13) return;
+        const feature = e.features![0];
+        if (feature.id !== hoveredFeatureIdRef.current) {
+            if (hoveredFeatureIdRef.current) {
+                map.removeFeatureState(
+                    { source: mapSource, sourceLayer: "transitopia_cycling", id: hoveredFeatureIdRef.current },
+                    "hover"
+                );
+            }
+            hoveredFeatureIdRef.current = feature.id as string;
+            map.setFeatureState(
+                { source: mapSource, sourceLayer: "transitopia_cycling", id: feature.id },
+                { hover: true },
+            );
+            map.getCanvas().style.cursor = 'pointer';
+        }
+    }, [map]);
+
+    const handleMouseOut = React.useCallback(() => {
+        if (!map) return undefined;
+        if (hoveredFeatureIdRef.current) {
+            map.removeFeatureState({ source: mapSource, sourceLayer: "transitopia_cycling", id: hoveredFeatureIdRef.current }, 'hover');
+            hoveredFeatureIdRef.current = undefined;
+        }
+        map.getCanvas().style.cursor = 'default';
+    }, [map]);
+
+    useMapLayerEvent("mousemove", "cycling_path_1", handleMouseOver);
+    useMapLayerEvent("mousemove", "cycling_path_2", handleMouseOver);
+    useMapLayerEvent("mousemove", "cycling_path_3", handleMouseOver);
+    useMapLayerEvent("mousemove", "cycling_path_4", handleMouseOver);
+    useMapLayerEvent("mousemove", "cycling_path_construction", handleMouseOver);
+    useMapLayerEvent("mouseleave", "cycling_path_1", handleMouseOut);
+    useMapLayerEvent("mouseleave", "cycling_path_2", handleMouseOut);
+    useMapLayerEvent("mouseleave", "cycling_path_3", handleMouseOut);
+    useMapLayerEvent("mouseleave", "cycling_path_4", handleMouseOut);
+    useMapLayerEvent("mouseleave", "cycling_path_construction", handleMouseOut);
 
     const handleClick = React.useCallback((e: maplibregl.MapLayerEventType["click"]) => {
         if (!map) return;
+        if (map.getZoom() < 13) return;
         const feature = e.features![0];
-        if (selectedFeature) {
-            // Don't keep highlighting the previously selected feature:
+        setSelectedFeature((prevSelectedFeature) => {
+            if (prevSelectedFeature) {
+                // Don't keep highlighting the previously selected feature:
+                map.setFeatureState(
+                    { source: mapSource, sourceLayer: "transitopia_cycling", id: prevSelectedFeature.id },
+                    { selected: false },
+                );
+            }
+            if (feature === undefined) return undefined; // This won't happen because we limit the event to features on our cycling layer
             map.setFeatureState(
-                { source: mapSource, sourceLayer: "transitopia_cycling", id: selectedFeature.id },
-                { hover: false },
+                { source: mapSource, sourceLayer: "transitopia_cycling", id: feature.id },
+                { selected: true },
             );
-        }
-        if (feature === undefined) return; // This won't happen because we limit the event to features on our cycling layer
-        setSelectedFeature({ id: feature.id as string, type: "cycling-way", ...(feature.properties as MapCyclingElement) });
-        map.setFeatureState(
-            { source: mapSource, sourceLayer: "transitopia_cycling", id: feature.id },
-            { hover: true },
-        );
-    }, [map, selectedFeature]);
+            return { id: feature.id as string, type: "cycling-way", ...(feature.properties as MapCyclingElement) };
+        });
+    }, [map]);
 
     useMapLayerEvent("click", "cycling_path_1", handleClick);
     useMapLayerEvent("click", "cycling_path_2", handleClick);
@@ -119,9 +164,9 @@ export const MapCore: React.FC = () => {
                     {selectedFeature.shared_with_pedestrians ? <span className="inline-block m-1 px-1 rounded-md bg-yellow-200">shared with pedestrians</span> : null}
                     {selectedFeature.oneway == 1 ? <span className="inline-block m-1 px-1 rounded-md bg-yellow-200">one way</span> : null}
                     {
-                        selectedFeature.class === "track" ? <span className="inline-block m-1 px-1 rounded-md bg-green-800 text-white">track (separated from roadway)</span> : 
-                        selectedFeature.class === "lane" && selectedFeature.shared_with_vehicles ? <span className="inline-block m-1 px-1 rounded-md bg-red-600 text-white">shared lane</span> : 
-                        <span className="inline-block m-1 px-1 rounded-md bg-yellow-200">bike lane on roadway</span>
+                        selectedFeature.class === "track" ? <span className="inline-block m-1 px-1 rounded-md bg-green-800 text-white">track (separated from roadway)</span> :
+                            selectedFeature.class === "lane" && selectedFeature.shared_with_vehicles ? <span className="inline-block m-1 px-1 rounded-md bg-red-600 text-white">shared lane</span> :
+                                <span className="inline-block m-1 px-1 rounded-md bg-yellow-200">bike lane on roadway</span>
                     }
                 </div>
                 : null

@@ -1031,8 +1031,8 @@ export const layers: LayerSpecification[] = [
         "paint": {
             "line-color": [
                 "case",
-                ["boolean", ["feature-state", "hover"], false],
-                "rgba(200, 100, 100, 1)",
+                ["boolean", ["feature-state", "selected"], false], "rgba(50, 50, 200, 1)",
+                ["boolean", ["feature-state", "hover"], false], "rgba(200, 100, 100, 1)",
                 "rgba(226, 109, 35, 1)",
             ],
             "line-width": interpolateZoom({ z10: 3, z16: 4 }),
@@ -1054,8 +1054,8 @@ export const layers: LayerSpecification[] = [
         "paint": {
             "line-color": [
                 "case",
-                ["boolean", ["feature-state", "hover"], false],
-                "rgba(200, 100, 100, 1)",
+                ["boolean", ["feature-state", "selected"], false], "rgba(50, 50, 200, 1)",
+                ["boolean", ["feature-state", "hover"], false], "rgba(200, 100, 100, 1)",
                 "rgba(26, 109, 35, 1)",
             ],
             "line-width": interpolateZoom({ z10: 2, z16: 8 }),
@@ -1076,8 +1076,8 @@ export const layers: LayerSpecification[] = [
         "paint": {
             "line-color": [
                 "case",
-                ["boolean", ["feature-state", "hover"], false],
-                "rgba(200, 100, 100, 1)",
+                ["boolean", ["feature-state", "selected"], false], "rgba(50, 50, 200, 1)",
+                ["boolean", ["feature-state", "hover"], false], "rgba(200, 100, 100, 1)",
                 "rgba(26, 109, 35, 1)",
             ],
             "line-width": interpolateZoom({ z10: 2, z16: 7 }),
@@ -1118,8 +1118,8 @@ export const layers: LayerSpecification[] = [
         "paint": {
             "line-color": [
                 "case",
-                ["boolean", ["feature-state", "hover"], false],
-                "rgba(200, 100, 100, 1)",
+                ["boolean", ["feature-state", "selected"], false], "rgba(50, 50, 200, 1)",
+                ["boolean", ["feature-state", "hover"], false], "rgba(200, 100, 100, 1)",
                 "rgba(26, 109, 35, 1)",
             ],
             "line-width": interpolateZoom({ z10: 3, z16: 6 }),
@@ -1146,8 +1146,8 @@ export const layers: LayerSpecification[] = [
         "paint": {
             "line-color": [
                 "case",
-                ["boolean", ["feature-state", "hover"], false],
-                "rgba(200, 100, 100, 1)",
+                ["boolean", ["feature-state", "selected"], false], "rgba(50, 50, 200, 1)",
+                ["boolean", ["feature-state", "hover"], false], "rgba(200, 100, 100, 1)",
                 "rgba(26, 50, 35, 1)",
             ],
             "line-width": interpolateZoom({ z10: 2, z16: 4 }),

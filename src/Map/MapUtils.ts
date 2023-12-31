@@ -11,7 +11,7 @@ export const useMap = () => React.useContext(MapContext)?.map;
  * @param layerName Which map layer to watch for the event
  * @param handler The handler to call
  */
-export function useMapLayerEvent<eventName extends "click">(eventName: eventName, layerName: string, handler: (event: maplibregl.MapLayerEventType[eventName]) => void) {
+export function useMapLayerEvent<eventName extends "click"|"mouseenter"|"mouseleave"|"mousemove">(eventName: eventName, layerName: string, handler: (event: maplibregl.MapLayerEventType[eventName]) => void) {
     const map = useMap();
     React.useEffect(() => {
         if (!map) return;
