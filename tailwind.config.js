@@ -5,7 +5,14 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        cyclistGreen: "#5CC88D",
+        pedestrianOrange: "#EEA550",
+        transitBlue: "#31CDDC",
+        mainBlue: "#043760"
+      },
+    },
   },
   plugins: [],
 }
