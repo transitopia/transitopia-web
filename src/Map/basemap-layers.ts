@@ -19,7 +19,7 @@ import type {
 export const mapSource = "omt-transitopia";
 
 /** A linear interpolation of values based on the zoom level */
-function interpolateZoom<T>(
+export function interpolateZoom<T>(
     stops: {
         [zoom: `z${number}`]:
         | T
@@ -43,7 +43,7 @@ function interpolateZoom<T>(
  * more towards the high end of the range.
  * A base of '1' is equivalent to a linear interpolation.
  */
-function interpolateZoomExp<T>(
+export function interpolateZoomExp<T>(
     { base, ...stops }: {
         base: number;
         [zoom: `z${number}`]:
@@ -62,7 +62,7 @@ function interpolateZoomExp<T>(
     return ["interpolate", ["exponential", base], ["zoom"], ...spec];
 }
 
-const defaultLineLayout = {
+export const defaultLineLayout = {
     "line-cap": "round",
     "line-join": "round",
     "visibility": "visible",
@@ -281,6 +281,25 @@ export const layers: LayerSpecification[] = [
         "paint": {
             "line-color": "rgb(242,243,240)",
             "line-width": interpolateZoomExp({ base: 1.2, z15: 1, z17: 4 }),
+        },
+    },
+    {
+        // This includes pedestrian paths and cycling paths.
+        // We show it on the base map but draw in front of it on the cycling and pedestrian maps
+        id: "highway_path",
+        type: "line",
+        source: mapSource,
+        "source-layer": "transportation",
+        "filter": [
+            "all",
+            ["==", "$type", "LineString"],
+            ["==", "class", "path"],
+        ],
+        layout: defaultLineLayout,
+        "paint": {
+            "line-color": "rgb(234, 234, 234)",
+            "line-opacity": 0.9,
+            "line-width": interpolateZoom({ z13: 1, z20: 10 }),
         },
     },
     {
@@ -995,194 +1014,4 @@ export const layers: LayerSpecification[] = [
     //       "text-halo-width": 1.4,
     //     },
     //   },
-    {
-        id: "pedestrian_path",
-        type: "line",
-        source: mapSource,
-        "source-layer": "transportation",
-        "filter": [
-            "all",
-            ["==", "$type", "LineString"],
-            ["==", "class", "path"],
-            ["!=", "subclass", "cycleway"],
-        ],
-        layout: defaultLineLayout,
-        "paint": {
-            "line-color": "rgb(234, 234, 234)",
-            "line-opacity": 0.9,
-            "line-width": interpolateZoom({ z13: 1, z20: 10 }),
-        },
-    },
-    {
-        id: "cycling_path_construction",
-        type: "line",
-        source: mapSource,
-        "source-layer": "transitopia_cycling",
-        "filter": [
-            "all",
-            ["==", "$type", "LineString"],
-            ["==", "construction", true],
-        ],
-        "layout": {
-            "line-cap": "butt",
-            "line-join": "bevel",
-            "visibility": "visible",
-        },
-        "paint": {
-            "line-color": [
-                "case",
-                ["boolean", ["feature-state", "selected"], false], "rgba(50, 50, 200, 1)",
-                ["boolean", ["feature-state", "hover"], false], "rgba(200, 100, 100, 1)",
-                "rgba(226, 109, 35, 1)",
-            ],
-            "line-width": interpolateZoom({ z10: 3, z16: 4 }),
-            "line-dasharray": [0.4, 1],
-        },
-    },
-    {
-        id: "cycling_path_4",
-        type: "line",
-        source: mapSource,
-        "source-layer": "transitopia_cycling",
-        "filter": [
-            "all",
-            ["==", "$type", "LineString"],
-            ["==", "comfort", 4],
-            ["!=", "construction", true],
-        ],
-        layout: defaultLineLayout,
-        "paint": {
-            "line-color": [
-                "case",
-                ["boolean", ["feature-state", "selected"], false], "rgba(50, 50, 200, 1)",
-                ["boolean", ["feature-state", "hover"], false], "rgba(200, 100, 100, 1)",
-                "rgba(26, 109, 35, 1)",
-            ],
-            "line-width": interpolateZoom({ z10: 2, z16: 8 }),
-        },
-    },
-    {
-        id: "cycling_path_3",
-        type: "line",
-        source: mapSource,
-        "source-layer": "transitopia_cycling",
-        "filter": [
-            "all",
-            ["==", "$type", "LineString"],
-            ["==", "comfort", 3],
-            ["!=", "construction", true],
-        ],
-        layout: defaultLineLayout,
-        "paint": {
-            "line-color": [
-                "case",
-                ["boolean", ["feature-state", "selected"], false], "rgba(50, 50, 200, 1)",
-                ["boolean", ["feature-state", "hover"], false], "rgba(200, 100, 100, 1)",
-                "rgba(26, 109, 35, 1)",
-            ],
-            "line-width": interpolateZoom({ z10: 2, z16: 7 }),
-        },
-    },
-    {
-        // Draw white centre lines overtop of "comfort level 3" cycling paths
-        id: "cycling_path_3_inner",
-        type: "line",
-        source: mapSource,
-        "source-layer": "transitopia_cycling",
-        "minzoom": 13,
-        "filter": [
-            "all",
-            ["==", "$type", "LineString"],
-            ["==", "comfort", 3],
-            ["!=", "construction", true],
-        ],
-        layout: defaultLineLayout,
-        "paint": {
-            "line-color": "rgba(255, 255, 255, 0.6)",
-            "line-width": 2,
-            "line-dasharray": [2, 4],
-        },
-    },
-    {
-        id: "cycling_path_2",
-        type: "line",
-        source: mapSource,
-        "source-layer": "transitopia_cycling",
-        "filter": [
-            "all",
-            ["==", "$type", "LineString"],
-            ["==", "comfort", 2],
-            ["!=", "construction", true],
-        ],
-        layout: defaultLineLayout,
-        "paint": {
-            "line-color": [
-                "case",
-                ["boolean", ["feature-state", "selected"], false], "rgba(50, 50, 200, 1)",
-                ["boolean", ["feature-state", "hover"], false], "rgba(200, 100, 100, 1)",
-                "rgba(26, 109, 35, 1)",
-            ],
-            "line-width": interpolateZoom({ z10: 3, z16: 6 }),
-            // dashed lines when zoomed in greater than 12
-            "line-dasharray": {
-                type: "interval",
-                stops: [[0, [1]], [12, [0.4, 1.4]]],
-            },
-        },
-    },
-    {
-        id: "cycling_path_1",
-        type: "line",
-        source: mapSource,
-        "source-layer": "transitopia_cycling",
-        minzoom: 8,
-        "filter": [
-            "all",
-            ["==", "$type", "LineString"],
-            ["==", "comfort", 1],
-            ["!=", "construction", true],
-        ],
-        layout: defaultLineLayout,
-        "paint": {
-            "line-color": [
-                "case",
-                ["boolean", ["feature-state", "selected"], false], "rgba(50, 50, 200, 1)",
-                ["boolean", ["feature-state", "hover"], false], "rgba(200, 100, 100, 1)",
-                "rgba(26, 50, 35, 1)",
-            ],
-            "line-width": interpolateZoom({ z10: 2, z16: 4 }),
-            "line-dasharray": [0.3, 2],
-        },
-    },
-    {
-        id: "cycling_path_name",
-        type: "symbol",
-        source: mapSource,
-        "source-layer": "transportation_name",
-        "filter": [
-            "all",
-            ["!=", "class", "motorway"],
-            ["==", "$type", "LineString"],
-            ["==", "subclass", "cycleway"],
-        ],
-        "layout": {
-            "symbol-placement": "line",
-            "symbol-spacing": 350,
-            "text-field": "{name:latin} {name:nonlatin}",
-            "text-font": ["Metropolis Regular"],
-            "text-max-angle": 30,
-            "text-pitch-alignment": "viewport",
-            "text-rotation-alignment": "map",
-            "text-size": 10,
-            "text-transform": "uppercase",
-            "visibility": "visible",
-        },
-        "paint": {
-            "text-color": "rgba(24, 79, 19, 1)",
-            "text-halo-blur": 1,
-            "text-halo-color": "rgba(231, 231, 131, 0.72)",
-            "text-translate": [0, -10],
-            "text-halo-width": 2,
-        },
-    },
 ];

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { layers, mapSource } from "./transitopia-map-layers.ts";
+import { layers, mapSource } from "./basemap-layers.ts";
 import { MapContext } from "./MapUtils.ts";
 
 /** Constrain a numeric value to a certain range */

@@ -3,7 +3,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { Route } from "wouter";
 
 import { Map } from "./Map/Map.tsx";
-import { CyclingMap } from './Map/CyclingMap.tsx';
+import { CyclingMap } from './CyclingMap/CyclingMap.tsx';
 import { LinkWithQuery } from './components/LinkWithQuery.tsx';
 import { Icon } from './components/Icon.tsx';
 

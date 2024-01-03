@@ -1,12 +1,25 @@
 import React from "react";
 
-import { mapSource } from "./transitopia-map-layers.ts";
-import { useMap, useMapLayerEvent } from "./MapUtils.ts";
-import { MapCyclingElement } from "./MapData.ts";
+import { mapSource, layers } from "./cycling-map-layers.ts";
+import { useMap, useMapLayerEvent } from "../Map/MapUtils.ts";
+import { MapCyclingElement } from "../Map/MapData.ts";
 
 export const CyclingMap: React.FC = () => {
 
     const map = useMap();
+
+    // Add the cycling layers to the map:
+    React.useEffect(() => {
+        if (!map) return;
+        for (const layer of layers) {
+            map.addLayer(layer);
+        }
+        return () => {
+            for (const layer of layers) {
+                map.removeLayer(layer.id);
+            }
+        }
+    });
 
     const [selectedFeature, setSelectedFeature] = React.useState<{ id: string, type: "cycling-way" } & MapCyclingElement>();
     const hoveredFeatureIdRef = React.useRef<string | undefined>();
@@ -77,6 +90,19 @@ export const CyclingMap: React.FC = () => {
     useMapLayerEvent("click", "cycling_path_3", handleClick);
     useMapLayerEvent("click", "cycling_path_4", handleClick);
     useMapLayerEvent("click", "cycling_path_construction", handleClick);
+
+    React.useEffect(() => {
+        // When leaving the cycling map, clean up the state:
+        return () => {
+            if (!map) return;
+            if (selectedFeature) {
+                map.removeFeatureState({ source: mapSource, sourceLayer: "transitopia_cycling", id: selectedFeature.id }, 'selected');
+            }
+            if (hoveredFeatureIdRef.current) {
+                map.removeFeatureState({ source: mapSource, sourceLayer: "transitopia_cycling", id: hoveredFeatureIdRef.current }, 'hover');
+            }
+        }
+    });
 
     return <>
         {
