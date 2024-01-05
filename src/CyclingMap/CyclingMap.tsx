@@ -107,13 +107,19 @@ export const CyclingMap: React.FC = () => {
     return <>
         {
             selectedFeature ?
-                <div className="absolute w-96 h-60 bg-white z-50 top-20 left-5 border border-gray-500 rounded shadow-md p-2">
-                    {selectedFeature.name ?
-                        <><strong>{selectedFeature.name}</strong> ({`Cycling ${selectedFeature.class == "lane" ? "Lane" : "Track"}`})</>
-                        :
-                        <strong>{`Cycling ${selectedFeature.class == "lane" ? "Lane" : "Track"}`}</strong>
-                    }
-                    <br />
+                <div className="absolute w-96 h-60 bg-white z-50 top-24 left-5 border border-gray-500 rounded shadow-md p-2">
+                    <div className="flex">
+                        <div className="flex-1">
+                            {selectedFeature.name ?
+                                <><strong>{selectedFeature.name}</strong> ({`Cycling ${selectedFeature.class == "lane" ? "Lane" : "Track"}`})</>
+                                :
+                                <strong>{`Cycling ${selectedFeature.class == "lane" ? "Lane" : "Track"}`}</strong>
+                            }
+                        </div>
+                        <div className="flex-none">
+                            <button className="hover:bg-gray-200 px-2 rounded-lg" onClick={() => setSelectedFeature(undefined)}>x</button>
+                        </div>
+                    </div>
                     {selectedFeature.construction ? <span className="inline-block m-1 px-1 rounded-md bg-red-600 text-white">Under Construction</span> : null}
                     {selectedFeature.shared_with_vehicles ? <span className="inline-block m-1 px-1 rounded-md bg-red-600 text-white">shared with vehicles</span> : null}
                     {selectedFeature.shared_with_pedestrians ? <span className="inline-block m-1 px-1 rounded-md bg-yellow-200">shared with pedestrians</span> : null}
