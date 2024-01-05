@@ -9,7 +9,10 @@ export function LinkWithQuery(props: LinkProps & {className?: string, classNameA
     const [isActive] = useRoute(props.href ?? "--");
     if (isActive) {
         props = {...props, className: (props.className ?? "") + " " + props.classNameActive};
+    } else {
+        props = {...props}; // Make a copy of props so we don't modify the original
     }
+    delete props.classNameActive;  // This custom property shouldn't get passed into the <Link> component.
 
     if (props.href?.includes("?")) {
         return <>Links with ? not yet implemented.</>;
