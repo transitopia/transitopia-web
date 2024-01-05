@@ -3,6 +3,7 @@ import React from "react";
 import { mapSource, layers } from "./cycling-map-layers.ts";
 import { useMap, useMapLayerEvent } from "../Map/MapUtils.ts";
 import { MapCyclingElement } from "../Map/MapData.ts";
+import { MapOverlayWindow } from "../Map/MapOverlayWindow.tsx";
 
 export const CyclingMap: React.FC = () => {
 
@@ -107,7 +108,7 @@ export const CyclingMap: React.FC = () => {
     return <>
         {
             selectedFeature ?
-                <div className="absolute w-96 h-60 bg-white z-50 top-24 left-5 border border-gray-500 rounded shadow-md p-2">
+                <MapOverlayWindow className="top-24">
                     <div className="flex">
                         <div className="flex-1">
                             {selectedFeature.name ?
@@ -129,7 +130,7 @@ export const CyclingMap: React.FC = () => {
                             selectedFeature.class === "lane" && selectedFeature.shared_with_vehicles ? <span className="inline-block m-1 px-1 rounded-md bg-red-600 text-white">shared lane</span> :
                                 <span className="inline-block m-1 px-1 rounded-md bg-yellow-200">bike lane on roadway</span>
                     }
-                </div>
+                </MapOverlayWindow>
                 : null
         }
     </>

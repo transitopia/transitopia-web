@@ -2,6 +2,7 @@ import React from "react";
 
 import { layers } from "./walking-map-layers.ts";
 import { useMap, useMapZoom } from "../Map/MapUtils.ts";
+import { MapOverlayWindow } from "../Map/MapOverlayWindow.tsx";
 
 export const WalkingMap: React.FC = () => {
 
@@ -22,15 +23,15 @@ export const WalkingMap: React.FC = () => {
     });
 
     return <>
-        <div className="absolute w-96 h-30 bg-white z-50 top-24 left-5 border border-gray-500 rounded shadow-md p-2">
+        <MapOverlayWindow className="top-24">
             The Transitopia walking map is not yet developed, but for now you can see
             all the known pedestrian paths from OpenStreetMap.
-        </div>
+        </MapOverlayWindow>
         {
             zoom < 14 ?
-                <div className="absolute w-96 h-30 bg-white z-50 top-48 left-5 border border-gray-500 rounded shadow-md p-2 font-bold">
+                <MapOverlayWindow className="top-56 lg:top-48">
                     Zoom in to see walkways.
-                </div>
+                </MapOverlayWindow>
             : null
         }
     </>;
