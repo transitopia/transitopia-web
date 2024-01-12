@@ -4,7 +4,7 @@
 
 Transitopia is a mapping project that aims to provide high-quality **public transit**, **cycling**, and **pedestrian** infrastructure maps. The goal is to promote best practices and celebrate high quality infrastructure, while calling attention to unsafe and low-quality infrastructure.
 
-**Current status** (Dec 2024): We are working on **cycling** maps for the Metro Vancouver area, though the mapping process applies the same criteria throughout the province of BC, so the map will show cycling paths anywhere in the province of BC. **Transit** and **Pedestrian** maps will come in the future.
+**Current status** (Jan 2024): We are working on **cycling** maps for the Metro Vancouver area, though the mapping process applies the same criteria throughout the province of BC, so the map will show cycling paths anywhere in the province of BC. **Transit** and **Pedestrian** maps will come in the future.
 
 ## This repository
 

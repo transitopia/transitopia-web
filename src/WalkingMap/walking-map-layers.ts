@@ -6,9 +6,8 @@
 import type { LayerSpecification } from "maplibre-gl";
 import { defaultLineLayout, interpolateZoom } from "../Map/basemap-layers.ts";
 
-// Changes from Positron:
-// - Noto Sans font is removed since our font server can only serve one font at a time - https://github.com/openmaptiles/fonts/issues/17
 
+// Which map "source" file (which .pmtiles file) the walking data layers are found in
 export const mapSource = "omt-transitopia";
 
 
@@ -16,8 +15,6 @@ export const layers: LayerSpecification[] = [
     // TODO: pedestrian paths under construction
     // TODO: Various comfor levels of pedestrian paths
     {
-        // This includes pedestrian paths and cycling paths.
-        // We show it on the base map but draw in front of it on the cycling and pedestrian maps
         id: "walking_path",
         type: "line",
         source: mapSource,

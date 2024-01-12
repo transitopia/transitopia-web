@@ -6,9 +6,7 @@
 import type { LayerSpecification } from "maplibre-gl";
 import { defaultLineLayout, interpolateZoom } from "../Map/basemap-layers.ts";
 
-// Changes from Positron:
-// - Noto Sans font is removed since our font server can only serve one font at a time - https://github.com/openmaptiles/fonts/issues/17
-
+// Which map "source" file (which .pmtiles file) the cycling data layers are found in
 export const mapSource = "omt-transitopia";
 
 
