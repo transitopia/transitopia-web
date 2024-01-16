@@ -4,10 +4,10 @@
 // Design license: CC-BY 4.0 https://creativecommons.org/licenses/by/4.0/
 
 import type { LayerSpecification } from "maplibre-gl";
-import { defaultLineLayout, interpolateZoom } from "../Map/basemap-layers.ts";
+import { defaultLineLayout, interpolateZoom, mapSource as baseMapSource } from "../Map/basemap-layers.ts";
 
 // Which map "source" file (which .pmtiles file) the cycling data layers are found in
-export const mapSource = "omt-transitopia";
+export const mapSource = "transitopia-cycling";
 
 
 export const layers: LayerSpecification[] = [
@@ -155,7 +155,8 @@ export const layers: LayerSpecification[] = [
     {
         id: "cycling_path_name",
         type: "symbol",
-        source: mapSource,
+        // TODO: move the cycling path names into our Transitopia cycling layer
+        source: baseMapSource,
         "source-layer": "transportation_name",
         "filter": [
             "all",

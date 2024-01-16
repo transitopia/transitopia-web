@@ -9,15 +9,20 @@ export const CyclingMap: React.FC = () => {
 
     const map = useMap();
 
-    // Add the cycling layers to the map:
+    // Add the cycling data source and layers to the map:
     React.useEffect(() => {
         if (!map) return;
         for (const layer of layers) {
             map.addLayer(layer);
         }
         return () => {
-            for (const layer of layers) {
-                map.removeLayer(layer.id);
+            try {
+                for (const layer of layers) {
+                    if (map.getLayer(layer.id))
+                        map.removeLayer(layer.id);
+                }
+            } catch (err) {
+                console.error("Unable to remove cycling layers. Perhaps map was already destroyed. This can happen in dev with hot reloading.");
             }
         }
     });

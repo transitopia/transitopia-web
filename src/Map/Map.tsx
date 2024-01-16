@@ -6,7 +6,10 @@ import { MapContext } from "./MapUtils.ts";
 /** Constrain a numeric value to a certain range */
 const constrain = (value: number, min: number, max: number, def: number) => isNaN(value) ? def : value > max ? max : value < min ? min : value;
 /** Where we load our map tiles from */
-const sourceUrl = import.meta.env.VITE_MAP_TILES_CDN ?? "pmtiles://transitopia-bc.pmtiles";
+const sourceUrlBase = import.meta.env.VITE_BASE_MAP_TILES_CDN ?? "pmtiles://transitopia-base-bc.pmtiles";
+const sourceUrlCycling = import.meta.env.VITE_CYCLING_MAP_TILES_CDN ?? "pmtiles://transitopia-cycling-bc.pmtiles";
+/** Do we need to load the PMTiles library? */
+const needPmTiles = [sourceUrlBase, sourceUrlCycling].some(url => url.startsWith("pmtiles://"));
 // A global to track loading of pmtiles
 let pmTilesInitialized = false;
 
@@ -18,7 +21,7 @@ export const Map: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         const mapPromise = (async function () {
             // Load the map dependencies asynchronously via a separate bundle:
             const maplibregl = await import("maplibre-gl");
-            if (sourceUrl.startsWith("pmtiles://") && !pmTilesInitialized) {
+            if (needPmTiles && !pmTilesInitialized) {
                 // Load the "pmtiles" protocol that allows us to serve all the vector tiles for the map from a single large static .pmtiles file.
                 const pmtiles = await import("pmtiles"); // Only import if we need to; not required in production when using a CDN
                 const protocol = new pmtiles.Protocol();
@@ -42,14 +45,18 @@ export const Map: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     sources: {
                         [mapSource]: {
                             type: "vector",
-                            url: sourceUrl,
+                            url: sourceUrlBase,
                             attribution: 'Map: <a href="https://openstreetmap.org">OpenStreetMap</a> + <a href="https://openmaptiles.org/">OpenMapTiles </a> + <a href="https://maplibre.org/">MapLibre</a>'
                         },
+                        "transitopia-cycling": {
+                            type: "vector",
+                            url: sourceUrlCycling,
+                            attribution: "",
+                        }
                     },
                     layers,
                 }
             });
-            setMap(map);
             map.getCanvas().style.cursor = 'default';
 
             const handleMapViewChanged = (() => {
@@ -64,7 +71,7 @@ export const Map: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
             map.on("zoomend", handleMapViewChanged);
             map.on("moveend", handleMapViewChanged);
-
+            map.on("load", () => { setMap(map); });
             return map;
         })();
         // Cleanup:
