@@ -15,7 +15,7 @@ export const Map: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [map, setMap] = React.useState<maplibregl.Map>();
 
     React.useEffect(() => {
-        (async function () {
+        const mapPromise = (async function () {
             // Load the map dependencies asynchronously via a separate bundle:
             const maplibregl = await import("maplibre-gl");
             if (sourceUrl.startsWith("pmtiles://") && !pmTilesInitialized) {
@@ -53,7 +53,6 @@ export const Map: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             map.getCanvas().style.cursor = 'default';
 
             const handleMapViewChanged = (() => {
-                if (!map) return;
                 const zoom = map.getZoom();
                 const { lng, lat } = map.getCenter();
                 const url = new URL(location.href);
@@ -65,7 +64,13 @@ export const Map: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
             map.on("zoomend", handleMapViewChanged);
             map.on("moveend", handleMapViewChanged);
+
+            return map;
         })();
+        // Cleanup:
+        return () => {
+            mapPromise.then(map => map.remove());
+        }
     }, []);
 
     return <MapContext.Provider value={{ map }}>

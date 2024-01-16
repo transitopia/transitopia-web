@@ -54,6 +54,16 @@ export const CyclingMap: React.FC = () => {
         map.getCanvas().style.cursor = 'default';
     }, [map]);
 
+    React.useEffect(() => {
+        // When leaving the cycling map, clean up the hover state:
+        return () => {
+            if (!map) return;
+            if (hoveredFeatureIdRef.current) {
+                map.removeFeatureState({ source: mapSource, sourceLayer: "transitopia_cycling", id: hoveredFeatureIdRef.current }, 'hover');
+            }
+        }
+    }, [map]);
+
     useMapLayerEvent("mousemove", "cycling_path_1", handleMouseOver);
     useMapLayerEvent("mousemove", "cycling_path_2", handleMouseOver);
     useMapLayerEvent("mousemove", "cycling_path_3", handleMouseOver);
@@ -69,21 +79,10 @@ export const CyclingMap: React.FC = () => {
         if (!map) return;
         if (map.getZoom() < 13) return;
         const feature = e.features![0];
-        setSelectedFeature((prevSelectedFeature) => {
-            if (prevSelectedFeature) {
-                // Don't keep highlighting the previously selected feature:
-                map.setFeatureState(
-                    { source: mapSource, sourceLayer: "transitopia_cycling", id: prevSelectedFeature.id },
-                    { selected: false },
-                );
-            }
-            if (feature === undefined) return undefined; // This won't happen because we limit the event to features on our cycling layer
-            map.setFeatureState(
-                { source: mapSource, sourceLayer: "transitopia_cycling", id: feature.id },
-                { selected: true },
-            );
-            return { id: feature.id as string, type: "cycling-way", ...(feature.properties as MapCyclingElement) };
-        });
+        setSelectedFeature(
+            feature === undefined ? undefined : // This won't happen because we limit the event to features on our cycling layer
+            { id: feature.id as string, type: "cycling-way", ...(feature.properties as MapCyclingElement) }
+        );
     }, [map]);
 
     useMapLayerEvent("click", "cycling_path_1", handleClick);
@@ -93,17 +92,17 @@ export const CyclingMap: React.FC = () => {
     useMapLayerEvent("click", "cycling_path_construction", handleClick);
 
     React.useEffect(() => {
-        // When leaving the cycling map, clean up the state:
-        return () => {
-            if (!map) return;
-            if (selectedFeature) {
+        if (!map) return;
+        if (selectedFeature) {
+            map.setFeatureState(
+                { source: mapSource, sourceLayer: "transitopia_cycling", id: selectedFeature.id },
+                { selected: true },
+            );
+            return () => {
                 map.removeFeatureState({ source: mapSource, sourceLayer: "transitopia_cycling", id: selectedFeature.id }, 'selected');
             }
-            if (hoveredFeatureIdRef.current) {
-                map.removeFeatureState({ source: mapSource, sourceLayer: "transitopia_cycling", id: hoveredFeatureIdRef.current }, 'hover');
-            }
         }
-    });
+    }, [map, selectedFeature]);
 
     return <>
         {
