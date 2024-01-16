@@ -3,6 +3,8 @@ import React from "react";
 
 export const MapContext: React.Context<{ map?: maplibregl.Map }> = React.createContext({});
 
+export const MapLibreGLContext: React.Context<{ maplibregl?: typeof import("maplibre-gl") }> = React.createContext({});
+
 export const useMap = () => React.useContext(MapContext)?.map;
 
 /**

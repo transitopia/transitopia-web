@@ -2,7 +2,7 @@ import './App.css';
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Redirect, Route, Switch } from "wouter";
 
-import { Map } from "./Map/Map.tsx";
+import { AsyncMapLibreGLLoader, Map } from "./Map/Map.tsx";
 import { CyclingMap } from './CyclingMap/CyclingMap.tsx';
 import { LinkWithQuery } from './components/LinkWithQuery.tsx';
 import { Icon } from './components/Icon.tsx';
@@ -12,7 +12,7 @@ import { MapOverlayWindow } from './Map/MapOverlayWindow.tsx';
 function App() {
 
     return (
-        <>
+        <AsyncMapLibreGLLoader loadingContent={<div className='w-screen h-screen text-center bg-gray-200 leading-[100vh] text-gray-400 text-2xl'>Loading Transitopia...</div>}>
             <Map>
                 <MapOverlayWindow className="top-5 flex items-center">
                     <img src="/transitopia-logo-h.svg" alt="Transitopia" className='block h-7 lg:h-10 mr-2 lg:mr-4' />
@@ -31,7 +31,7 @@ function App() {
                     </Route>
                 </Switch>
             </Map>
-        </>
+        </AsyncMapLibreGLLoader>
     )
 }
 

@@ -1,9 +1,8 @@
 import React from "react";
-import * as maplibregl from "maplibre-gl";
 import * as pmtiles from "pmtiles";
 
 import { layers, mapSource } from "./basemap-layers.ts";
-import { MapContext } from "./MapUtils.ts";
+import { MapContext, MapLibreGLContext } from "./MapUtils.ts";
 
 /** Constrain a numeric value to a certain range */
 const constrain = (value: number, min: number, max: number, def: number) => isNaN(value) ? def : value > max ? max : value < min ? min : value;
@@ -15,7 +14,11 @@ const needPmTiles = [sourceUrlBase, sourceUrlCycling].some(url => url.startsWith
 // A global to track loading of pmtiles
 let pmTilesInitialized = false;
 
+
 export const Map: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+
+    const maplibregl = React.useContext(MapLibreGLContext).maplibregl;
+    if (!maplibregl) throw new Error("<Map> cannot render without MapLibreGLContext. Add <AsyncMapLibreGLLoader> around <Map>.");
 
     const [map, setMap] = React.useState<maplibregl.Map>();
 
@@ -77,6 +80,7 @@ export const Map: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             console.log("Destroying map");
             map.remove();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return <MapContext.Provider value={{ map }}>
@@ -84,3 +88,27 @@ export const Map: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         {children};
     </MapContext.Provider>;
 };
+
+/**
+ * MapLibreGL JS is a _huge_ dependency, so we load it asynchronously and display a loading message
+ * while it's loading. Simply wrap any map components in this loader component.
+ */
+export const AsyncMapLibreGLLoader: React.FC<{children: React.ReactNode, loadingContent: React.ReactNode}> = ({children, loadingContent}) => {
+
+    const [maplibregl, setMaplibregl] = React.useState<typeof import("maplibre-gl")>();
+
+    React.useEffect(() => {
+        (async function() {
+            const maplibregl = await import("maplibre-gl");
+            setMaplibregl(maplibregl);
+        })();
+    }, []);
+
+    if (maplibregl) {
+        // MapLibreGL JS has loaded. Render the children, and make 'maplibregl' available to them via context:
+        return React.createElement(MapLibreGLContext.Provider, {value: {maplibregl}}, children);
+    } else {
+        // It hasn't loaded yet. Display the loading message.
+        return loadingContent;
+    }
+}
