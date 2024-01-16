@@ -6,6 +6,10 @@ Transitopia is a mapping project that aims to provide high-quality **public tran
 
 **Current status** (Jan 2024): We are working on **cycling** maps for the Metro Vancouver area, though the mapping process applies the same criteria throughout the province of BC, so the map will show cycling paths anywhere in the province of BC. **Transit** and **Pedestrian** maps will come in the future.
 
+Online at: **[www.transitopia.org](https://www.transitopia.org/cycling)**.
+
+![Screenshot of www.transitopia.org](./readme-screenshot.png)
+
 ## This repository
 
 This Single Page Application implements a viewer for the Transitopia map.
@@ -16,10 +20,11 @@ It uses React + TypeScript + Vite + MapLibre GL.
 
 1. You need Node.js and Java 17+ on your system.
 2. Clone this repo to your system.
-3. Build the vector tiles file: The map data file is over 800 MiB so cannot be included in this git repository. Use the [planetiler-transitopia](https://github.com/transitopia/planetiler-transitopia) repository to generate the `transitopia-bc.pmtiles` map data file using planetiler (see that repo's README). Copy the resulting map data file into this repo as `public/transitopia-bc.pmtiles`.
-4. Install dependencies: `npm install`
-5. Run the development server: `npm run dev`
-6. Go to http://localhost:5173/ in your browser.
+3. Build the vector base map tiles file: The map data file is over 800 MiB so cannot be included in this git repository. Use the [Transitopia planetiler-openmaptiles](https://github.com/transitopia/planetiler-openmaptiles) repository to generate the `transitopia-base-bc.pmtiles` vector map data file using planetiler (see that repo's README). Copy the resulting map data file into this repo as `public/transitopia-base-bc.pmtiles`.
+4. Build the vector overlay tiles file: this contains the cycling paths, pedestrian paths, etc. and is specific to Transitopia. Use the [planetiler-transitopia](https://github.com/transitopia/planetiler-transitopia) repository to generate the `transitopia-cycling-bc.pmtiles` vector map data file using planetiler (see that repo's README). Copy the resulting map data file into this repo as `public/transitopia-cycling-bc.pmtiles`.
+5. Install dependencies: `npm install`
+6. Run the development server: `npm run dev`
+7. Go to http://localhost:5173/ in your browser.
 
 ## Credits
 
