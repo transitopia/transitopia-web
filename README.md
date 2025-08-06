@@ -18,7 +18,7 @@ It uses React + TypeScript + Vite + MapLibre GL.
 
 ## How to run Transitopia Locally
 
-1. You need Node.js and Java 17+ on your system.
+1. You need Node.js and Java 21+ on your system.
 2. Clone this repo to your system.
 3. Build the vector base map tiles file: The map data file is over 800 MiB so cannot be included in this git repository. Use the [Transitopia planetiler-openmaptiles](https://github.com/transitopia/planetiler-openmaptiles) repository to generate the `transitopia-base-bc.pmtiles` vector map data file using planetiler (see that repo's README). Copy the resulting map data file into this repo: `cp ../planetiler-openmaptiles/data/transitopia-base-bc.pmtiles public/transitopia-base-bc.pmtiles`.
 4. Build the vector overlay tiles file: this contains the cycling paths, pedestrian paths, etc. and is specific to Transitopia. Use the [planetiler-transitopia](https://github.com/transitopia/planetiler-transitopia) repository to generate the `transitopia-cycling-bc.pmtiles` vector map data file using planetiler (see that repo's README). Copy the resulting map data file into this repo as `cp ../planetiler-transitopia/data/transitopia-cycling-british-columbia.pmtiles public/transitopia-cycling-bc.pmtiles`.
