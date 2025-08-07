@@ -21,7 +21,7 @@ export const CyclingMap: React.FC = () => {
                     if (map.getLayer(layer.id))
                         map.removeLayer(layer.id);
                 }
-            } catch (err) {
+            } catch {
                 console.error("Unable to remove cycling layers. Perhaps map was already destroyed. This can happen in dev with hot reloading.");
             }
         }
