@@ -2,7 +2,7 @@ import React from "react";
 import * as pmtiles from "pmtiles";
 
 import { layers, mapSource } from "./basemap-layers.ts";
-import { MapContext, MapLibreGLContext } from "./MapUtils.ts";
+import { MapContext, MapLibreGLContext, type MapLibreGLType } from "./MapUtils.ts";
 
 /** Constrain a numeric value to a certain range */
 const constrain = (value: number, min: number, max: number, def: number) => isNaN(value) ? def : value > max ? max : value < min ? min : value;
@@ -27,7 +27,7 @@ export const Map: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         if (needPmTiles && !pmTilesInitialized) {
             // Load the "pmtiles" protocol that allows us to serve all the vector tiles for the map from a single large static .pmtiles file.
             const protocol = new pmtiles.Protocol();
-            maplibregl.default.addProtocol("pmtiles", protocol.tile);
+            maplibregl.addProtocol("pmtiles", protocol.tile);
             pmTilesInitialized = true;
         }
         const initialUrl = new URL(location.href);
@@ -95,7 +95,7 @@ export const Map: React.FC<{ children: React.ReactNode }> = ({ children }) => {
  */
 export const AsyncMapLibreGLLoader: React.FC<{children: React.ReactNode, loadingContent: React.ReactNode}> = ({children, loadingContent}) => {
 
-    const [maplibregl, setMaplibregl] = React.useState<typeof import("maplibre-gl")>();
+    const [maplibregl, setMaplibregl] = React.useState<MapLibreGLType>();
 
     React.useEffect(() => {
         (async function() {
