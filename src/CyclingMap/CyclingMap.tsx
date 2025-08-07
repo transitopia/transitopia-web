@@ -28,7 +28,7 @@ export const CyclingMap: React.FC = () => {
     });
 
     const [selectedFeature, setSelectedFeature] = React.useState<{ id: string, type: "cycling-way" } & MapCyclingElement>();
-    const hoveredFeatureIdRef = React.useRef<string | undefined>();
+    const hoveredFeatureIdRef = React.useRef<string | undefined>(undefined);
 
     const handleMouseOver = React.useCallback((e: maplibregl.MapLayerEventType["mousemove"]) => {
         if (!map) return undefined;
