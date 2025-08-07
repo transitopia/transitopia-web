@@ -17,9 +17,9 @@ function App() {
                 <MapOverlayWindow className="top-5 flex items-center">
                     <img src="/transitopia-logo-h.svg" alt="Transitopia" className='block h-7 lg:h-10 mr-2 lg:mr-4' />
                     <div className="flex-auto"></div>
-                    {/*<LinkWithQuery href="/transit" className="mx-1 p-1  w-8 h-8 text-center rounded-full bg-gray-50 hover:bg-gray-100" classNameActive="!bg-transitBlue"><Icon icon="bus-front-fill" altText="Transit" /></LinkWithQuery>*/}
-                    <LinkWithQuery href="/walking" className="mx-1 p-1 w-8 h-8 text-center rounded-full bg-gray-50 hover:bg-gray-100" classNameActive="!bg-pedestrianOrange"><Icon icon="person-walking" altText="Walking" /></LinkWithQuery>
-                    <LinkWithQuery href="/cycling" className="mx-1 p-1  w-8 h-8 text-center rounded-full bg-gray-50 hover:bg-gray-100" classNameActive="!bg-cyclistGreen"><Icon icon="bicycle" altText="Cycling" /></LinkWithQuery>
+                    {/*<LinkWithQuery href="/transit" className="mx-1 p-1  w-8 h-8 text-center rounded-full bg-gray-50 hover:bg-gray-100" classNameActive="bg-transit-blue!"><Icon icon="bus-front-fill" altText="Transit" /></LinkWithQuery>*/}
+                    <LinkWithQuery href="/walking" className="mx-1 p-1 w-8 h-8 text-center rounded-full bg-gray-50 hover:bg-gray-100" classNameActive="bg-pedestrian-orange!"><Icon icon="person-walking" altText="Walking" /></LinkWithQuery>
+                    <LinkWithQuery href="/cycling" className="mx-1 p-1  w-8 h-8 text-center rounded-full bg-gray-50 hover:bg-gray-100" classNameActive="bg-cyclist-green!"><Icon icon="bicycle" altText="Cycling" /></LinkWithQuery>
                 </MapOverlayWindow>
                 <Switch>
                     <Route path="/cycling"><CyclingMap /></Route>
