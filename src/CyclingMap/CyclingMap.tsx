@@ -2,7 +2,7 @@ import React from "react";
 
 import { mapSource, layers } from "./cycling-map-layers.ts";
 import { useMap, useMapLayerEvent } from "../Map/MapUtils.ts";
-import { MapCyclingElement } from "../Map/MapData.ts";
+import { type MapCyclingElement, type MapParkingElement } from "../Map/MapData.ts";
 import { MapOverlayWindow } from "../Map/MapOverlayWindow.tsx";
 
 export const CyclingMap: React.FC = () => {
@@ -27,7 +27,7 @@ export const CyclingMap: React.FC = () => {
         }
     });
 
-    const [selectedFeature, setSelectedFeature] = React.useState<{ id: string, type: "cycling-way" } & MapCyclingElement>();
+    const [selectedFeature, setSelectedFeature] = React.useState<MapCyclingElement | MapParkingElement>();
     const hoveredFeatureIdRef = React.useRef<string | undefined>(undefined);
 
     const handleMouseOver = React.useCallback((e: maplibregl.MapLayerEventType["mousemove"]) => {
@@ -81,12 +81,18 @@ export const CyclingMap: React.FC = () => {
     useMapLayerEvent("mouseleave", "cycling_path_construction", handleMouseOut);
 
     const handleClick = React.useCallback((e: maplibregl.MapLayerEventType["click"]) => {
-        if (!map) return;
-        if (map.getZoom() < 13) return;
-        const feature = e.features![0];
+        const feature = e.features?.[0];
+        if (!map || map.getZoom() < 13 || !feature) return;
         setSelectedFeature(
-            feature === undefined ? undefined : // This won't happen because we limit the event to features on our cycling layer
-            { id: feature.id as string, type: "cycling-way", ...(feature.properties as MapCyclingElement) }
+            { id: feature.id as string, type: "cycling_way", ...feature.properties } as MapCyclingElement
+        );
+    }, [map]);
+
+    const handlePointClick = React.useCallback((e: maplibregl.MapLayerEventType["click"]) => {
+        const feature = e.features?.[0];
+        if (!map || map.getZoom() < 13 || !feature) return;
+        setSelectedFeature(
+            { id: feature.id as string, type: "bicycle_parking", ...(feature.properties as any) } as MapParkingElement
         );
     }, [map]);
 
@@ -95,6 +101,7 @@ export const CyclingMap: React.FC = () => {
     useMapLayerEvent("click", "cycling_path_3", handleClick);
     useMapLayerEvent("click", "cycling_path_4", handleClick);
     useMapLayerEvent("click", "cycling_path_construction", handleClick);
+    useMapLayerEvent("click", "bike_parking_point", handlePointClick);
 
     React.useEffect(() => {
         if (!map) return;
@@ -111,7 +118,7 @@ export const CyclingMap: React.FC = () => {
 
     return <>
         {
-            selectedFeature ?
+            selectedFeature?.type === "cycling_way" ?
                 <MapOverlayWindow className="top-24">
                     <div className="flex">
                         <div className="flex-1">
@@ -135,7 +142,25 @@ export const CyclingMap: React.FC = () => {
                                 <span className="inline-block m-1 px-1 rounded-md bg-yellow-200">bike lane on roadway</span>
                     }
                 </MapOverlayWindow>
-                : null
+            : selectedFeature?.type === "bicycle_parking" ?
+                <MapOverlayWindow className="top-24">
+                    <div className="flex">
+                        <div className="flex-1">
+                            {selectedFeature.name ?
+                                <><strong>{selectedFeature.name}</strong> (Bicycle Parking)</>
+                                :
+                                <strong>Bicycle Parking</strong>
+                            }
+                        </div>
+                        <div className="flex-none">
+                            <button className="hover:bg-gray-200 px-2 rounded-lg" onClick={() => setSelectedFeature(undefined)}>x</button>
+                        </div>
+                    </div>
+                    {selectedFeature.capacity ? <div>Capacity: {selectedFeature.capacity} bikes.</div> : null}
+                    <br />
+                    <a className="text-slate-500 text-sm" href={`https://www.openstreetmap.org/node/${selectedFeature.id}`}>View or edit this entry on OpenStreetMap</a>
+                </MapOverlayWindow>
+            : null
         }
     </>
 }

@@ -184,4 +184,26 @@ export const layers: LayerSpecification[] = [
             "text-halo-width": 2,
         },
     },
+    // Bike parking (points)
+    {
+        id: "bike_parking_point",
+        type: "circle",
+        source: mapSource,
+        "source-layer": "transitopia_cycling",
+        "filter": [
+            "all",
+            ["==", "$type", "Point"],
+            ["==", "amenity", "bicycle_parking"],
+        ],
+        layout: {
+            visibility: "visible",
+            "circle-sort-key": 1,
+        },
+        "paint": {
+            "circle-radius": interpolateZoom({ z8: 1, z12: 1, z16: 3 }),
+            "circle-color": "rgba(231, 231, 131, 0.72)",
+            "circle-stroke-width": interpolateZoom({ z8: 0.5, z12: 0.5, z16: 2 }),
+            "circle-stroke-color": interpolateZoom({ z12: "rgba(26, 109, 35, 0)", z14: "rgba(26, 109, 35, 0.5)", z16: "rgba(26, 109, 35, 0.8)" }),
+        },
+    },
 ];
