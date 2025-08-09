@@ -9,6 +9,15 @@ import { defaultLineLayout, interpolateZoom, mapSource as baseMapSource } from "
 // Which map "source" file (which .pmtiles file) the cycling data layers are found in
 export const mapSource = "transitopia-cycling";
 
+/** Layers with cycling paths, as opposed to other things like bike rack locations */
+export const pathLayerIds = [
+    "cycling_path_1",
+    "cycling_path_2",
+    "cycling_path_3",
+    "cycling_path_4",
+    "cycling_path_construction"
+];
+export const otherLayerIds = ["bike_parking_point"];
 
 export const layers: LayerSpecification[] = [
     {
@@ -203,7 +212,13 @@ export const layers: LayerSpecification[] = [
             "circle-radius": interpolateZoom({ z8: 1, z12: 1, z16: 3 }),
             "circle-color": "rgba(231, 231, 131, 0.72)",
             "circle-stroke-width": interpolateZoom({ z8: 0.5, z12: 0.5, z16: 2 }),
-            "circle-stroke-color": interpolateZoom({ z12: "rgba(26, 109, 35, 0)", z14: "rgba(26, 109, 35, 0.5)", z16: "rgba(26, 109, 35, 0.8)" }),
+            "circle-stroke-color": [
+                "case",
+                ["boolean", ["feature-state", "selected"], false], "rgba(50, 50, 200, 1)",
+                ["boolean", ["feature-state", "hover"], false], "rgba(200, 100, 100, 1)",
+                "rgba(26, 109, 35, 1)",
+            ],
+            "circle-stroke-opacity": interpolateZoom({ z12: 0, z14: 0.5, z16: 0.8 }),
         },
     },
 ];

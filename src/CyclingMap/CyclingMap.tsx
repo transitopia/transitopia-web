@@ -1,6 +1,6 @@
 import React from "react";
 
-import { mapSource, layers } from "./cycling-map-layers.ts";
+import { mapSource, layers, pathLayerIds, otherLayerIds } from "./cycling-map-layers.ts";
 import { useMap, useMapLayerEvent } from "../Map/MapUtils.ts";
 import { type MapCyclingElement, type MapParkingElement } from "../Map/MapData.ts";
 import { MapOverlayWindow } from "../Map/MapOverlayWindow.tsx";
@@ -69,16 +69,8 @@ export const CyclingMap: React.FC = () => {
         }
     }, [map]);
 
-    useMapLayerEvent("mousemove", "cycling_path_1", handleMouseOver);
-    useMapLayerEvent("mousemove", "cycling_path_2", handleMouseOver);
-    useMapLayerEvent("mousemove", "cycling_path_3", handleMouseOver);
-    useMapLayerEvent("mousemove", "cycling_path_4", handleMouseOver);
-    useMapLayerEvent("mousemove", "cycling_path_construction", handleMouseOver);
-    useMapLayerEvent("mouseleave", "cycling_path_1", handleMouseOut);
-    useMapLayerEvent("mouseleave", "cycling_path_2", handleMouseOut);
-    useMapLayerEvent("mouseleave", "cycling_path_3", handleMouseOut);
-    useMapLayerEvent("mouseleave", "cycling_path_4", handleMouseOut);
-    useMapLayerEvent("mouseleave", "cycling_path_construction", handleMouseOut);
+    useMapLayerEvent("mousemove", handleMouseOver, ...pathLayerIds, ...otherLayerIds);
+    useMapLayerEvent("mouseleave", handleMouseOut, ...pathLayerIds, ...otherLayerIds);
 
     const handleClick = React.useCallback((e: maplibregl.MapLayerEventType["click"]) => {
         const feature = e.features?.[0];
@@ -96,12 +88,8 @@ export const CyclingMap: React.FC = () => {
         );
     }, [map]);
 
-    useMapLayerEvent("click", "cycling_path_1", handleClick);
-    useMapLayerEvent("click", "cycling_path_2", handleClick);
-    useMapLayerEvent("click", "cycling_path_3", handleClick);
-    useMapLayerEvent("click", "cycling_path_4", handleClick);
-    useMapLayerEvent("click", "cycling_path_construction", handleClick);
-    useMapLayerEvent("click", "bike_parking_point", handlePointClick);
+    useMapLayerEvent("click", handleClick, ...pathLayerIds);
+    useMapLayerEvent("click", handlePointClick, ...otherLayerIds);
 
     React.useEffect(() => {
         if (!map) return;
