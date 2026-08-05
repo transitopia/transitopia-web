@@ -5,11 +5,13 @@
 export function removeUndefinedKeys<Shape extends Record<string, unknown>>(
   obj: Shape,
 ): {
-  [K in keyof Shape as undefined extends Shape[K] ?
-    Shape[K] extends undefined ?
-      never
+  [
+    K in keyof Shape as undefined extends Shape[K] ?
+      Shape[K] extends undefined ?
+        never
+      : K
     : K
-  : K]: Exclude<Shape[K], undefined>;
+  ]: Exclude<Shape[K], undefined>;
 } {
   return Object.fromEntries(
     Object.entries(obj).filter(([_k, v]) => v !== undefined),
