@@ -2,13 +2,13 @@ name: Build Transitopia Cycling Layer
 
 on:
   pull_request:
-    paths: 'map-layers/**'
+    paths: "map-layers/**"
   push:
     branches:
       - main
   schedule:
     # Every day at 09:45 UTC
-    - cron:  '45 9 * * *'
+    - cron: "45 9 * * *"
 jobs:
   Build-Cycling-Layer:
     runs-on: ubuntu-latest
@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: "21"
       - name: Cache local Maven repository
         uses: actions/cache@v5
         with:
@@ -52,10 +52,11 @@ jobs:
       RCLONE_CONFIG_TRANSITOPIA_MAPS_R2_ACCESS_KEY_ID: ${{ secrets.RCLONE_CONFIG_TRANSITOPIA_MAPS_R2_ACCESS_KEY_ID }}
       RCLONE_CONFIG_TRANSITOPIA_MAPS_R2_SECRET_ACCESS_KEY: ${{ secrets.RCLONE_CONFIG_TRANSITOPIA_MAPS_R2_SECRET_ACCESS_KEY }}
     steps:
-      - name: Skip time-consuming man-db update on apt installs
-        run: sudo apt-get remove --purge man-db
       - name: Install rclone
-        run: sudo apt install --yes rclone
+        run: |
+          curl -fsSL -o /tmp/rclone.zip https://downloads.rclone.org/v1.75.0/rclone-v1.75.0-linux-amd64.zip
+          sudo unzip -j -o /tmp/rclone.zip '*/rclone' -d /usr/local/bin
+          rclone --version
       - name: Download compiled maps
         uses: actions/download-artifact@v7
         with:
