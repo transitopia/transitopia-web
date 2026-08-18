@@ -1,4 +1,5 @@
 import React from "react";
+import type * as MapLibreGL from "maplibre-gl";
 
 import {
   layers,
@@ -44,7 +45,7 @@ export const CyclingMap: React.FC = () => {
   const hoveredFeatureIdRef = React.useRef<string | undefined>(undefined);
 
   const handleMouseOver = React.useCallback(
-    (e: maplibregl.MapLayerEventType["mousemove"]) => {
+    (e: MapLibreGL.MapLayerEventType["mousemove"]) => {
       if (!map) return undefined;
       if (map.getZoom() < 13) return;
       const feature = e.features![0];
@@ -121,7 +122,7 @@ export const CyclingMap: React.FC = () => {
   );
 
   const handleClick = React.useCallback(
-    (e: maplibregl.MapLayerEventType["click"]) => {
+    (e: MapLibreGL.MapLayerEventType["click"]) => {
       const feature = e.features?.[0];
       if (!map || map.getZoom() < 13 || !feature) return;
       setSelectedFeature({
@@ -134,7 +135,7 @@ export const CyclingMap: React.FC = () => {
   );
 
   const handlePointClick = React.useCallback(
-    (e: maplibregl.MapLayerEventType["click"]) => {
+    (e: MapLibreGL.MapLayerEventType["click"]) => {
       const feature = e.features?.[0];
       if (!map || map.getZoom() < 13 || !feature) return;
       setSelectedFeature({
