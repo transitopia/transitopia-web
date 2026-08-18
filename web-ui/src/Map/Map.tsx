@@ -1,11 +1,16 @@
 import React from "react";
 import * as pmtiles from "pmtiles";
+// Since v6, MapLibre GL loads its web worker from a separate file, whose URL it guesses relative to
+// its own module URL. That guess is wrong once a bundler is involved, so we have Vite build the
+// worker (and its dependencies) as a chunk of our app, and tell MapLibre GL where to find it.
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 
 import { layers, mapSource } from "./basemap-layers.ts";
 import {
   MapContext,
   MapLibreGLContext,
   type MapLibreGLType,
+  type MapType,
 } from "./MapUtils.ts";
 
 /** Constrain a numeric value to a certain range */
@@ -37,7 +42,7 @@ export const Map: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     );
   }
 
-  const [map, setMap] = React.useState<maplibregl.Map>();
+  const [map, setMap] = React.useState<MapType>();
 
   React.useEffect(() => {
     // Load the map dependencies asynchronously via a separate bundle:
@@ -139,6 +144,7 @@ export const AsyncMapLibreGLLoader: React.FC<{
   React.useEffect(() => {
     void (async function () {
       const maplibregl = await import("maplibre-gl");
+      maplibregl.setWorkerUrl(maplibreWorkerUrl);
       setMaplibregl(maplibregl);
     })();
   }, []);

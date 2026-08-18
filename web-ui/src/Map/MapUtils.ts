@@ -1,9 +1,10 @@
 import React from "react";
 import type * as MapLibreGL from "maplibre-gl";
 export type MapLibreGLType = typeof MapLibreGL;
+export type MapType = MapLibreGL.Map;
 
 export const MapContext = React.createContext<{
-  map: maplibregl.Map | undefined;
+  map: MapLibreGL.Map | undefined;
 }>({ map: undefined });
 
 export const MapLibreGLContext: React.Context<{ maplibregl?: MapLibreGLType }> =
@@ -21,7 +22,7 @@ export function useMapLayerEvent<
   eventName extends "click" | "mouseenter" | "mouseleave" | "mousemove",
 >(
   eventName: eventName,
-  handler: (event: maplibregl.MapLayerEventType[eventName]) => void,
+  handler: (event: MapLibreGL.MapLayerEventType[eventName]) => void,
   ...layerNames: string[]
 ) {
   const map = useMap();
@@ -45,7 +46,7 @@ export function useMapLayerEvent<
  */
 export function useMapEvent<eventName extends "load" | "zoomend" | "moveend">(
   eventName: eventName,
-  handler: (event: maplibregl.MapEventType[eventName]) => void,
+  handler: (event: MapLibreGL.MapEventType[eventName]) => void,
 ) {
   const map = useMap();
   React.useEffect(() => {
